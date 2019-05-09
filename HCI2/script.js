@@ -41,7 +41,7 @@ d3.json("./formattedData.json", function(error, graph){
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
-      .attr("stroke-width", function(d) { return Math.sqrt(d.value)-2; });
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -50,7 +50,7 @@ d3.json("./formattedData.json", function(error, graph){
     .enter().append("g")
     
   var circles = node.append("circle")
-      .attr("r", function(d){ return d.group == 0 ? 5 : 5+d.group })
+      .attr("r", function(d){ return 2 + Math.sqrt(d.nrArticles*10) })
       // .attr("r", 5)
       .attr("fill", function(d) { return color(d.group); })
       .call(d3.drag()
