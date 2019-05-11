@@ -46,11 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/converter.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
-              <folding>
-                <element signature="e#0#213#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="751">
+              <caret line="75" column="82" selection-start-line="75" selection-start-column="82" selection-end-line="75" selection-end-column="82" />
             </state>
           </provider>
         </entry>
@@ -86,7 +83,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1446" />
     <option name="y" value="27" />
     <option name="width" value="1228" />
@@ -97,6 +94,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -130,8 +129,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -195,11 +192,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1507" y="27" width="1613" height="1023" extended-state="6" />
+    <frame x="1990" y="27" width="1850" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49834985" visible="true" weight="0.21952777" />
-      <window_info id="Structure" order="1" sideWeight="0.50165015" side_tool="true" visible="true" weight="0.21952777" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49760765" visible="true" weight="0.22228381" />
+      <window_info id="Structure" order="1" sideWeight="0.50239235" side_tool="true" visible="true" weight="0.22228381" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Capture Tool" order="4" />
@@ -208,7 +205,7 @@
       <window_info id="Favorites" order="7" sideWeight="0.50165015" side_tool="true" weight="0.21952777" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.26996624" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49904275" visible="true" weight="0.3183352" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49904275" visible="true" weight="0.31773666" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4996809" weight="0.3048369" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -260,20 +257,17 @@
     <entry file="file://$PROJECT_DIR$/gradle.properties">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/converter.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="751">
+          <caret line="75" column="82" selection-start-line="75" selection-start-column="82" selection-end-line="75" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
           <caret line="16" column="52" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/converter.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
-          <folding>
-            <element signature="e#0#213#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

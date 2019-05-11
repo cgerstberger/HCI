@@ -50,6 +50,8 @@ fun main(){
 //    println("cleanLinks: " + measureTimeMillis { cleanLinks(twentyPercentLinks) })
     val cleanedLinks: List<Link> = cleanLinks(twentyPercentLinks, cleanedNodes)
 
+    val cleanedNodes2: List<Node> = cleanNodes(cleanedNodes, cleanedLinks)
+
     cleanedLinks.forEach { link ->
         var nodeFound: Boolean = false;
         for(node in cleanedNodes){
@@ -60,7 +62,7 @@ fun main(){
             println("missing node for $link")
     }
 
-    cleanedNodes.forEach { node ->
+    cleanedNodes2.forEach { node ->
         var linkFound: Boolean = false;
         for(link in cleanedLinks){
             if(link.source == node.id || link.target == node.id)
@@ -70,8 +72,8 @@ fun main(){
             println("missing link for $node")
     }
 
-    val s: String = gson.toJson(NodeLink(cleanedNodes, cleanedLinks))
-    val printStream = PrintStream("/home/christoph/Desktop/HCI Data/formattedData.json")
+    val s: String = gson.toJson(NodeLink(cleanedNodes2, cleanedLinks))
+    val printStream = PrintStream("/home/christoph/Desktop/HCI Data/formattedData2.json")
     printStream.print(s)
 }
 

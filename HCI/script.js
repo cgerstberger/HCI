@@ -34,7 +34,7 @@ function dragended(d) {
   d.fy = null;
 }
 
-d3.json("./formattedData.json", function(error, graph){
+d3.json("./formattedData2.json", function(error, graph){
   if (error) throw error;
 
   var link = svg.append("g")
