@@ -4,6 +4,7 @@
 <head>
   <title>Clustered Network</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.4/fuse.min.js"></script>
 
   <style type="text/css">
     html {
@@ -194,6 +195,28 @@
           oninput="d3.select('#link_IterationsSliderOutput').text(value); forceProperties.link.iterations=value; updateAll();">
       </label>
     </div>
+
+    <div class="force">
+      <p><label>highlight</label> Highlights clicked node and connected nodes</p>
+      <label>
+        nodeOpacity
+        <output id="highlight_NodeOpacitySliderOutput">0.3</output>
+        <input type="range" min="0.1" max="1" value="0.3" step="0.1"
+          oninput="d3.select('#highlight_NodeOpacitySliderOutput').text(value); forceProperties.highlight.nodeOpacity=value; updateHighlight();">
+      </label>
+      <label>
+        linkOpacity
+        <output id="highlight_LinkOpacitySliderOutput">0.1</output>
+        <input type="range" min="0.1" max="1" value="0.1" step="0.1"
+          oninput="d3.select('#highlight_LinkOpacitySliderOutput').text(value); forceProperties.highlight.linkOpacity=value; updateHighlight();">
+      </label>
+    </div>
+
+    <div class="force">
+        <p><label>search</label> Fuzy searches node and highlights it</p>
+        <input id="searchField" type="text" name="foo" onKeyUp="search();" />
+    </div>
+
   </div>
   <svg></svg>
   <script type="text/javascript" src="./script.js">
