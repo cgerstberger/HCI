@@ -34,7 +34,7 @@ function dragended(d) {
   d.fy = null;
 }
 
-d3.json("./formattedData2.json", function(error, graph){
+d3.json("./formattedData-small.json", function(error, graph){
   if (error) throw error;
 
   var link = svg.append("g")
@@ -54,21 +54,25 @@ d3.json("./formattedData2.json", function(error, graph){
       .attr("r", function(d){ return Math.sqrt(d.nrArticles*3) + 2 })
       // .attr("r", 5)
       .attr("fill", function(d) { return color(d.group); })
+
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
 
+        
+
+  node.append("title")
+      .text(function(d) { return d.id; });
+
   var lables = node.append("text")
       .text(function(d) {
         return d.id;
       })
-      .attr('x', 6)
-      .attr('y', 3)
+      .attr("text-anchor", "middle")
+      .attr("pointer-events", "none")
+      .attr("dy", ".35em")
       .style('font-size', function(d) { return Math.sqrt(d.nrArticles)*2; });
-
-  node.append("title")
-      .text(function(d) { return d.id; });
 
   simulation
       .nodes(graph.nodes)
@@ -87,6 +91,8 @@ d3.json("./formattedData2.json", function(error, graph){
     node
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
-        })
+        });
+
+    node.select("text").raise();
   }
 });
