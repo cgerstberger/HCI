@@ -157,7 +157,7 @@
         <input type="range" min="0" max="2" value=".7" step=".1"
           oninput="d3.select('#collide_StrengthSliderOutput').text(value); forceProperties.collide.strength=value; updateAll();">
       </label>
-      <label margin-bottom="15px"><input type="checkbox" checked
+      <label style="margin-bottom:10px;"><input type="checkbox" checked
           onchange="forceProperties.collide.circleRadius = this.checked; updateAll();">
         use circle radius</label>
       <label title="Size of nodes">
@@ -177,7 +177,7 @@
     <div class="force">
       <p><label><input type="checkbox" checked onchange="forceProperties.link.enabled = this.checked; updateAll();">
           link</label> Sets link length</p>
-      <label><input type="checkbox"
+      <label style="margin-bottom:10px;"><input type="checkbox"
           onchange="forceProperties.link.dynamicDistance = this.checked; updateAll();">
         dynamic distance</label>
 
