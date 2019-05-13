@@ -3,21 +3,17 @@ import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.File
 import java.io.PrintStream
-import java.sql.Time
 import java.util.concurrent.ConcurrentHashMap
-import java.util.stream.Collectors
 import kotlin.streams.toList
-import kotlin.system.measureTimeMillis
 
 val keywordMap: ConcurrentHashMap<String, List<Article>> = ConcurrentHashMap()
+const val percentage = 0.09
+const val inputPath = "/home/christoph/Desktop/HCI Data/tags.json"
+const val outputPath = "/home/christoph/IdeaProjects/HCI/HCI/formattedData_09.json"
 
 fun main(){
 
-    val reader: BufferedReader = File("/home/christoph/Desktop/HCI Data/tags_ext.json").bufferedReader()
-//    val readNodes: BufferedReader = File("/home/christoph/Desktop/HCI Data/nodes.json").bufferedReader()
-//    val writeNodes: PrintStream = PrintStream("/home/christoph/Desktop/HCI Data/nodes.json");
-//    val readLinks: BufferedReader = File("/home/christoph/Desktop/HCI Data/links.json").bufferedReader()
-//    val writeLinks: PrintStream = PrintStream("/home/christoph/Desktop/HCI Data/links.json");
+    val reader: BufferedReader = File(inputPath).bufferedReader()
 
     val inputString: String = reader.use { it.readText() }
     val gson = Gson()
@@ -28,58 +24,30 @@ fun main(){
 //    println("calcUniqueTags: " + measureTimeMillis { calcUniqueTags(articles) })
     val uniqueTags = calcUniqueTags(articles)
 
-//    saving nodes and links in files for less operations
-//    val nodesString: String = readNodes.use { it.readText() }
-//    val nodes: List<Node> = gson.fromJson(nodesString, object: TypeToken<List<Node>>() {}.type)
-//    val linksString: String = readLinks.use { it.readText() }
-//    val links: List<Link> = gson.fromJson(linksString, object: TypeToken<List<Link>>() {}.type)
-//    println(nodes)
-//    println(links)
-
 //    println("calcNodes: " + measureTimeMillis { calcNodes(articles, uniqueTags) })
     val nodes: List<Node> = calcNodes(articles, uniqueTags).sortedBy { node -> node.id }
-//    writeNodes.print(gson.toJson(nodes))
 //    println("calcLinks: " + measureTimeMillis { calcLinks(articles, uniqueTags) })
     var links: List<Link> = calcLinks(articles, uniqueTags)
-//    writeLinks.print(gson.toJson(links))
 
 //    println("calcPercentageLinksParallel: " + measureTimeMillis { calcPercentageLinksParallel(nodes, links) })
-    val twentyPercentLinks: List<Link> = calcPercentageLinksParallel(nodes, links)
+    val reducedLinks: List<Link> = calcPercentageLinksParallel(nodes, links)
 
 //    println("calcGroups: " + measureTimeMillis { calcGroups(baseTags) })
     val groups: List<Group> = calcGroups(baseTags)
 
-//    println("setGroupsToNodes: " + measureTimeMillis { setGroupsToNodes(nodes, baseTags, groups, twentyPercentLinks) })
-    setGroupsToNodes(nodes, baseTags, groups, twentyPercentLinks)
-//    println("cleanNodes: " + measureTimeMillis { cleanNodes(nodes, twentyPercentLinks) })
-    val cleanedNodes: List<Node> = cleanNodes(nodes, twentyPercentLinks)
-//    println("cleanLinks: " + measureTimeMillis { cleanLinks(twentyPercentLinks, cleanedNodes) })
-    val cleanedLinks: List<Link> = cleanLinks(twentyPercentLinks, cleanedNodes)
+//    println("setGroupsToNodes: " + measureTimeMillis { setGroupsToNodes(nodes, baseTags, groups, reducedLinks) })
+    setGroupsToNodes(nodes, baseTags, groups, reducedLinks)
+//    println("cleanNodes: " + measureTimeMillis { cleanNodes(nodes, reducedLinks) })
+    val cleanedNodes: List<Node> = cleanNodes(nodes, reducedLinks)
+//    println("cleanLinks: " + measureTimeMillis { cleanLinks(reducedLinks, cleanedNodes) })
+    val cleanedLinks: List<Link> = cleanLinks(reducedLinks, cleanedNodes)
 //    println("cleanedNodes2: " + measureTimeMillis { cleanNodes(cleanedNodes, cleanedLinks) })
-    val cleanedNodes2: List<Node> = cleanNodes(cleanedNodes, cleanedLinks)
+    val noDuplicateLinks: List<Link> = removeDuplicates(cleanedLinks)
 
-    cleanedLinks.forEach { link ->
-        var nodeFound: Boolean = false;
-        for(node in cleanedNodes){
-            if (node.id == link.source)
-                nodeFound = true
-        }
-        if(!nodeFound)
-            println("missing node for $link")
-    }
 
-    cleanedNodes2.forEach { node ->
-        var linkFound: Boolean = false;
-        for(link in cleanedLinks){
-            if(link.source == node.id || link.target == node.id)
-                linkFound = true
-        }
-        if(!linkFound)
-            println("missing link for $node")
-    }
-
-    val s: String = gson.toJson(NodeLink(cleanedNodes2, cleanedLinks))
-    val printStream = PrintStream("/home/christoph/Desktop/HCI Data/formattedData_ext.json")
+    val s: String = gson.toJson(NodeLink(cleanedNodes, noDuplicateLinks))
+//    val printStream = PrintStream("/home/christoph/Desktop/HCI Data/formattedData_05_1.json")
+    val printStream = PrintStream(outputPath)
     printStream.print(s)
 }
 
@@ -127,8 +95,6 @@ fun calcLinks(articles: List<Article>, uniqueTags: Set<String>): List<Link> {
     println("calcLinks(...) started")
     return uniqueTags.mapIndexed { index, source ->
         val sourceArticles: List<Article>? = keywordMap[source]
-        if(sourceArticles == null)
-            println("source = $source")
         val subLinks: List<Link> = uniqueTags
             .parallelStream()
             .filter { target -> target != source }
@@ -152,8 +118,6 @@ fun calcLinksParallel(articles: List<Article>, uniqueTags: Set<String>): List<Li
         .parallelStream()
         .map { source ->
         val sourceArticles: List<Article>? = keywordMap[source]
-        if(sourceArticles == null)
-            println("source = $source")
         val subLinks: List<Link> = uniqueTags
             .filter { target -> target != source }
             .map { target ->
@@ -171,7 +135,6 @@ fun calcLinksParallel(articles: List<Article>, uniqueTags: Set<String>): List<Li
 
 private fun calcPercentageLinksParallel(nodes: List<Node>, links: List<Link>): List<Link> {
     println("calcPercentageLinks(...) started")
-    val percentage = 0.1
     val linksSubset: MutableList<Link> = arrayListOf()
     nodes
         .parallelStream()
@@ -179,9 +142,9 @@ private fun calcPercentageLinksParallel(nodes: List<Node>, links: List<Link>): L
             val nodeLinks: List<Link> = links
                 .filter { l -> l.source == node.id }
                 .sortedByDescending { l -> l.value }
-            val twentyPercentList = nodeLinks
+            val reducedLinks = nodeLinks
                 .subList(0, (nodeLinks.size * percentage).toInt())
-            linksSubset.addAll(twentyPercentList)
+            linksSubset.addAll(reducedLinks)
         }
     return linksSubset
 }
@@ -199,7 +162,7 @@ private fun setGroupsToNodes(
     nodes: List<Node>,
     baseTags: Set<String>,
     groups: List<Group>,
-    twentyPercentLinks: List<Link>
+    reducedLinks: List<Link>
 ) {
     println("setGroupsToNodes(...) started")
     nodes
@@ -207,42 +170,56 @@ private fun setGroupsToNodes(
         .forEach { node ->
             if (baseTags.contains(node.id)) {
                 node.group = groups.single { g -> g.name == node.id }.id
-
             } else {
-                val orderedLinks = twentyPercentLinks
+                var orderedLinks = reducedLinks
                     .filter { l -> l.source == node.id && baseTags.contains(l.target) }
+
                 val sortedOrderedLinks = orderedLinks
                     .sortedByDescending { l -> l.value }
                 if (sortedOrderedLinks.isNotEmpty())
                     node.group = groups.single { g -> g.name == sortedOrderedLinks[0].target }.id
+
             }
         }
 }
 
 private fun cleanNodes(
     nodes: List<Node>,
-    twentyPercentLinks: List<Link>
+    reducedLinks: List<Link>
 ): List<Node> {
     println("cleanNodes(...) started")
     return nodes
         .parallelStream()
-//        .filter { node -> node.group > 0 }
+        .filter { node -> node.group > 0 }
         .filter { node ->
-            twentyPercentLinks.any { link -> link.source == node.id || link.target == node.id }
+            reducedLinks.any { link -> link.source == node.id || link.target == node.id }
         }
         .toList()
 }
 
-private fun cleanLinks(twentyPercentLinks: List<Link>,
+private fun cleanLinks(reducedLinks: List<Link>,
                        cleanNodes: List<Node>): List<Link> {
     println("cleanLinks(...) started")
-    return twentyPercentLinks
+    return reducedLinks
         .parallelStream()
-        .filter { link ->
-            link.source.isNotBlank() && link.target.isNotBlank()
-        }
-        .filter { link -> cleanNodes.any { node -> node.id == link.source } }
+//        .filter { link -> link.source.isNotBlank() && link.target.isNotBlank() }
+        .filter { link -> cleanNodes.any { node -> node.id == link.source } && cleanNodes.any { node -> node.id == link.target } }
+//        .filter { link -> !reducedLinks.any { secLink -> link.source == secLink. target && link.target == secLink.source } }
         .toList()
+}
+
+private fun removeDuplicates(cleanLinks: List<Link>): List<Link> {
+    // (source -> target && source <- target)
+    val newList: MutableList<Link> = mutableListOf()
+    for (link in cleanLinks){
+        val hasDuplicate = newList
+            .any { link2 ->
+                (link.source == link2.source && link.target == link2.target) ||
+                        (link.source == link2.target && link.target == link2.source) }
+        if (!hasDuplicate)
+            newList.add(link)
+    }
+    return newList
 }
 
 

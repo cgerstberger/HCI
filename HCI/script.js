@@ -38,7 +38,7 @@ function dragended(d) {
   d.fy = null;
 }
 
-d3.json("./formattedData_05.json", function(error, graph){
+d3.json("./formattedData_10.json", function(error, graph){
   if (error) throw error;
 
   //Sort for correct rendering order
