@@ -10,12 +10,16 @@ svg = svg.call(d3.zoom().on("zoom", function () {
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("link", d3.forceLink().distance(linkDistance).id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force('collision', d3.forceCollide().radius(function(d) {
       return Math.sqrt(d.nrArticles*3) + 3
     }));
+
+function linkDistance() {
+  return 50;
+}
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -37,6 +41,11 @@ function dragended(d) {
 d3.json("./formattedData_05.json", function(error, graph){
   if (error) throw error;
 
+  //Sort for correct rendering order
+  graph.nodes.sort(function(a, b) {
+    return a.nrArticles - b.nrArticles;
+  });
+
   var link = svg.append("g")
       .attr("class", "links")
     .selectAll("line")
@@ -49,18 +58,15 @@ d3.json("./formattedData_05.json", function(error, graph){
     .selectAll("g")
     .data(graph.nodes)
     .enter().append("g")
-    
+
   var circles = node.append("circle")
       .attr("r", function(d){ return Math.sqrt(d.nrArticles*3) + 2 })
-      // .attr("r", 5)
       .attr("fill", function(d) { return color(d.group); })
 
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
-
-        
 
   node.append("title")
       .text(function(d) { return d.id; });
@@ -72,7 +78,7 @@ d3.json("./formattedData_05.json", function(error, graph){
       .attr("text-anchor", "middle")
       .attr("pointer-events", "none")
       .attr("dy", ".35em")
-      .style('font-size', function(d) { return Math.sqrt(d.nrArticles)*2; });
+      .style('font-size', function(d) { return Math.sqrt(d.nrArticles); });
 
   simulation
       .nodes(graph.nodes)
