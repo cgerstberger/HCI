@@ -9,7 +9,7 @@ svg = svg.call(d3.zoom().on("zoom", function () {
   .append("g")
 
 //Load Data
-d3.json("./formattedData_08.json", function (error, _graph) {
+d3.json("./formattedData_05.json", function (error, _graph) {
   if (error) throw error;
 
   //Sort for correct rendering order
@@ -146,6 +146,7 @@ function updateForces() {
     .iterations(forceProperties.link.iterations)
     .links(forceProperties.link.enabled ? graph.links : [])
 
+  simulation.velocityDecay(0.6)
   simulation.alpha(1).restart();
 }
 
@@ -222,6 +223,8 @@ function updateDisplay() {
     .style("opacity", forceProperties.link.enabled ? 1 : 0);
 
 }
+
+
 function ticked() {
   link
     .attr("x1", function (d) { return d.source.x; })
@@ -397,8 +400,4 @@ function initFuzy() {
   };
   fuse = new Fuse(graph.nodes, options); 
 }
-
-
-
-
 
